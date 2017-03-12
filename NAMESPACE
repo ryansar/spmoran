@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+importFrom(fields, rdist)
+importFrom(Matrix, determinant)
+importFrom(vegan, spantree)
+importFrom("stats", "cor", "kmeans", "lm", "logLik", "optim",
+             "predict", "pt", "residuals", "sd")

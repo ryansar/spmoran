@@ -1,0 +1,17 @@
+dd7f8994538ca31339acb0d6bf068c78 *DESCRIPTION
+2337af89b452cf084bdc07234a319eb8 *NAMESPACE
+0127980ff0fab8099b151f28898109b0 *R/esf.R
+609bee511ab44e617d2d906e27c7e73c *R/meigen.R
+ae71b2c4aacb284cabfb3b4acde1a26c *R/meigen_f.R
+3a947712b7ca1d80365fafbc878bd8cc *R/resf.R
+c1668e04d2a0b090200b102016dc347a *R/resf_vc.R
+7fef8f24af32a064dafea59662f1e05e *build/vignette.rds
+1a742fac9c30586eb325bbea77a94ef3 *inst/doc/vignette.pdf
+1d6d7d946d96d4e75964c52f2ecd3b36 *inst/doc/vignette.pdf.asis
+148aa8a4f279ce830f7ab3a3dc713898 *man/esf.Rd
+b4b0f33b5ab94a6047f2436ea30fb260 *man/meigen.Rd
+6cab3e88e9a360a4d351d4fe07ed9026 *man/meigen_f.Rd
+a98c3516798ff17da3d583ed305856db *man/resf.Rd
+d6c6a321aff3bf495e1639af82e1e7a3 *man/resf_vc.Rd
+e14d17c372e95fa4c8625aac4834dae8 *vignettes/vignette.Rmd
+1d6d7d946d96d4e75964c52f2ecd3b36 *vignettes/vignette.pdf.asis
