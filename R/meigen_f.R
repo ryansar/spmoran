@@ -1,4 +1,4 @@
-meigen_f	<- function( coords, enum = 200 ){
+meigen_f	<- function( coords, enum = 200, longlat = FALSE ){
     n		<- dim( coords )[ 1 ]
     if( enum < 1 | enum != floor( enum ) ){
     	stop( " enum must be a positive integer smaller than n" )
@@ -7,16 +7,19 @@ meigen_f	<- function( coords, enum = 200 ){
     	stop( " enum must be less than n" )
     }
 
-
     if( enum >= n - 1 ){
-    	meig	<- meigen(coords=coords)
+    	meig	<- meigen(coords = coords, longlat = longlat)
     	ev_ap	<- meig$ev
     	ev_ap0	<- meig$ev_full
     	sf_ap	<- meig$sf
     	fast	<- 0
     } else {
     	coordk	<- kmeans( coords, centers = enum + 1 )$centers
-    	D	<- rdist( coordk )
+    	if( longlat == TRUE){
+    		D	<- rdist.earth( coordk )
+    	} else {
+    		D	<- rdist( coordk )
+    	}
     	h	<- max( spantree( D )$dist )
     	C	<- exp( -D / h )
     	Cmean	<- apply( C, 1, mean )
@@ -26,7 +29,11 @@ meigen_f	<- function( coords, enum = 200 ){
     	ev0	<- eigenC$values [   eigenC$values > 1e-08 ]
     	ev_ap0	<- ev0 * ( n / enum ) - 1
     	sf_ap0	<- sf0 %*% diag( 1 / ev0 )
-    	sf_ap0	<- t( exp( -rdist( coordk, coords ) / h ) - Cmean ) %*% sf_ap0
+    	if( longlat == TRUE){
+	    	sf_ap0	<- t( exp( -rdist.earth( coordk, coords ) / h ) - Cmean ) %*% sf_ap0
+    	} else {
+    		sf_ap0	<- t( exp( -rdist( coordk, coords ) / h ) - Cmean ) %*% sf_ap0
+    	}
     	sf_ap0	<- t( t( sf_ap0 ) - colMeans( sf_ap0 ) )
     	ev_ap	<- ev_ap0[   ev_ap0 > 1e-08 ]
     	sf_ap	<- as.matrix( sf_ap0[ , ev_ap0 > 1e-08 ] )
@@ -36,6 +43,3 @@ meigen_f	<- function( coords, enum = 200 ){
     }
     return( list( sf  =sf_ap, ev = ev_ap, ev_full = ev_ap0, fast = fast ) )
 }
-
-
-

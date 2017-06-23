@@ -2,7 +2,7 @@
 \alias{meigen_f}
 \title{Fast approximation of Moran's eigenvectors}
 \usage{
-meigen_f( coords, enum = 200 )
+meigen_f( coords, enum = 200, longlat=FALSE )
 }
 \description{
 This function performs a fast approximation of Moran's eigenvectors and their corresponding eigenvalues.
@@ -10,6 +10,7 @@ This function performs a fast approximation of Moran's eigenvectors and their co
 \arguments{
 \item{coords}{Matrix of spatial point coordinates (\eqn{N} x 2)}
 \item{enum}{Number of eigenvectors and eigenvalues to be extracted (scalar). Default is 200}
+\item{longlat}{TRUE if point coordinates are longitude-latitude decimal, in which case distances are measured in kilometers. Default is FALSE}
 }
 \details{
 This function extracts approximated Moran's eigenvectors from MCM. M = I - 11'/\eqn{N} is a centering operator, and C is a spatial connectivity matrix whose (\eqn{i}, \eqn{j})-th element is given by exp( -\eqn{d_i,j} / \eqn{h} ), where \eqn{d_i,j} is the Euclidean distance between sample sites \eqn{i} and \eqn{j}, and \eqn{h} is a range parameter given by the maximum length of the minimum spanning tree connecting sample sites (see Dray et al., 2006).

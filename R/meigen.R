@@ -1,11 +1,15 @@
-meigen		<- function( coords, threshold = 0, enum = NULL, cmat = NULL ){
+meigen		<- function( coords, threshold = 0, enum = NULL, cmat = NULL, longlat = FALSE){
     if( threshold > 1 | threshold < 0 ){
     	stop( "threshold must lie between 0 and 1" )
     } else if ( threshold ==1) {
     	threshold <- threshold - 1e-07
     }
     if( is.null( cmat )){
-    	D	<- rdist( coords )
+    	if( longlat == TRUE){
+    		D	<- rdist.earth( coords )
+    	} else {
+    		D	<- rdist( coords )
+    	}
     	h	<- max( spantree( D )$dist )
     	C	<- exp( -D / h )
     } else {

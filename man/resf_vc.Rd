@@ -2,7 +2,7 @@
 \alias{resf_vc}
 \title{RE-ESF with spatially varying coefficients}
 \usage{
-resf_vc( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "reml" )
+resf_vc( y, x = NULL, xconst = NULL, meig, method = "reml" )
 }
 \description{
 This function estimates the random effects eigenvector spatial filtering (RE-ESF) model with varying coefficients.
@@ -12,7 +12,6 @@ This function estimates the random effects eigenvector spatial filtering (RE-ESF
 \item{x}{Matrix of explanatory variables whose coefficients are allowed to vary across geographical space (\eqn{N} x \eqn{k}). Default is NULL}
 \item{xconst}{Matrix of explanatory variables whose coefficients are assumed constant across space (\eqn{N} x \eqn{K_const}). Default is NULL}
 \item{meig}{Moran's eigenvectors and eigenvalues. Output from \code{\link{meigen}} or \code{\link{meigen_f}}}
-\item{se}{If it is TRUE, standard errors, t-values, and p-value sfor spatially varying coefficients are calculated. The computation can be slow for large samples. Default is TRUE}
 \item{method}{Estimation method. Restricted maximum likelihood method ("reml") and maximum likelihood method ("ml") are available. Default is "reml"}
 }
 \value{
@@ -49,7 +48,7 @@ xconst  <- boston.c[,c("ZN","INDUS", "CHAS", "RM", "DIS", "AGE", "CRIM",
                        "RAD", "TAX", "PTRATIO", "B", "LSTAT")]
 coords  <- boston.c[,c("LAT","LON")]
 meig 	<- meigen(coords=coords)
-res	<- resf_vc(y=y,x=x,xconst=xconst,meig=meig, method ="reml")
+res	<- resf_vc(y=y,x=x,xconst=xconst,meig=meig)
 res$b
 res$s
 res$e
@@ -58,7 +57,14 @@ res$bse_vc[1:10,]
 res$t_vc[1:10,]
 res$p_vc[1:10,]
 
+###Plot the first SVC (intercept)
+#
+#require(ggplot2)
+#ggplot(mapping = aes(x = coords$LON, y = coords$LAT)) +
+#  geom_point(aes(colour = res$b_vc[,1])) +
+#  scale_color_gradientn(colours=rev(rainbow(4)))
+
 #########Fast approximation
-meig 	<- meigen_f(coords=coords)
-res	<- resf_vc(y=y,x=x,xconst=xconst, meig=meig, method ="reml", se = FALSE)
+meig_f 	<- meigen_f(coords=coords)
+res	<- resf_vc(y=y,x=x,xconst=xconst, meig=meig_f)
 }

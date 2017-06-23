@@ -39,13 +39,13 @@ x	<- boston.c[,c("CRIM","ZN","INDUS", "CHAS", "NOX","RM", "AGE",
                        "DIS" ,"RAD", "TAX", "PTRATIO", "B", "LSTAT")]
 coords  <- boston.c[,c("LAT","LON")]
 meig 	<- meigen(coords=coords)
-res	<- resf(y=y,x=x,meig=meig, method = "reml")
+res	<- resf(y=y,x=x,meig=meig)
 res$b
 res$s
 res$e
 
 #########Fast approximation
-meig 	<- meigen_f(coords=coords)
-res	<- resf(y=y,x=x,meig=meig, method = "reml")
+meig_f	<- meigen_f(coords=coords)
+res  <- resf(y=y,x=x,meig=meig_f)
 }
 

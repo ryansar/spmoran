@@ -14,14 +14,14 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     dum   <- 0
     if( is.null( x ) ){
     	sfmod	<- lm( y ~ 1 )
-    	X	  <- NULL
+    	X	<- NULL
     	nx	<- 1
     } else {
     	X00	<- as.matrix( x )
     	if( is.numeric( X00 ) == F ){
     		mode( X00 ) <- "numeric"
     	}
-    	X	<- X00[ , apply( X00, 2, sd ) != 0 ]
+    	X	<- as.matrix( X00[ , apply( X00, 2, sd ) != 0 ] )
     	if( dim( X )[ 2 ] == 0 ) {
     		sfmod	<- lm( y ~ 1 )
     		X	<- NULL
@@ -48,7 +48,7 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     sf_list	<- 1:ne
 
     if( dum == 0 ){
-    if( ( fn != "all" ) ){
+    if( fn != "all" ){
     	Obj	<- ObjEval( sfmod = sfmod, fn = fn )
     	Obj_old	<- Obj - 1
     	obj	<- Obj
@@ -58,6 +58,7 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     		Obj_list<- NULL
     		for( ii in 1:dim( sf )[ 2 ] ){
     			d	<- data.frame( cbind( y, X, sf[ , ii ] ) )
+			names(d)[1]<-"y"
     			sfmod0	<- lm( y ~ ., d )
     			Obj	<- ObjEval( sfmod = sfmod0, fn = fn )
     			Obj_list<- c( Obj_list, Obj )
@@ -154,9 +155,3 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     }
     return( list( b = b_par, r = r, vif = vif, e = e_stat, sf = SF, pred = pred, resid = resid ) )
 }
-
-
-
-
-
-

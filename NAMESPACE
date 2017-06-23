@@ -1,6 +1,12 @@
 exportPattern("^[[:alpha:]]+")
-importFrom(fields, rdist)
+importFrom(fields, rdist, rdist.earth)
 importFrom(Matrix, determinant)
 importFrom(vegan, spantree)
+importFrom(parallel, makeCluster, detectCores, stopCluster)
+importFrom(doParallel, registerDoParallel)
+importFrom(foreach, foreach, "%dopar%")
+import(ggplot2)
 importFrom("stats", "cor", "kmeans", "lm", "logLik", "optim",
-             "predict", "pt", "residuals", "sd")
+             "predict", "pt", "residuals", "sd", "approx",
+           "density", "quantile", "rnorm")
+importFrom("graphics", "plot")

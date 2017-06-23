@@ -1,5 +1,4 @@
-
-resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "reml" ){
+resf_vc		<- function( y, x = NULL, xconst = NULL, meig, method = "reml" ){
 
     lik_resf_vc		<- function( par0, ev, M, m, yy, n, nx, nsv, ne, emet ){
     	par		<- par0 ^ 2
@@ -15,17 +14,22 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "rem
     	diag( M [ -( 1:nx ), -( 1:nx ) ] ) <- diag( M[ -( 1:nx ), -( 1:nx ) ] ) + 1
 
     	m[-(1:nx)]	<- m[ -( 1:nx ) ] * evSqrt
-    	b		<- solve( M, tol = 1e-25 ) %*% m
-    	sse		<- yy - 2 * t( b ) %*% m + t( b ) %*% M0 %*% b
-    	dd		<- sse + sum( b[ -( 1:nx ) ] ^ 2 )
-    	if( emet == "reml" ){
-    		term1	<- determinant( M )$modulus
-    		term2	<- ( n - nx ) * ( 1 + log( 2 * pi * dd / ( n - nx ) ) )
-    	} else if( emet == "ml" ){
-    		term1	<- determinant( as.matrix( M[ -( 1:nx ), -( 1:nx ) ] ) )$modulus
-    		term2	<- n * ( 1 + log( 2 * pi * dd / n ) )
+    	test		<-try(Minv	<- solve( M, tol = 1e-25 ))
+    	if(class(test)=="try-error"){
+    		loglik  	<- Inf
+    	} else {
+    		b		<- Minv %*% m
+    		sse		<- yy - 2 * t( b ) %*% m + t( b ) %*% M0 %*% b
+    		dd		<- sse + sum( b[ -( 1:nx ) ] ^ 2 )
+    		if( emet == "reml" ){
+    			term1	<- determinant( M )$modulus
+    			term2	<- ( n - nx ) * ( 1 + log( 2 * pi * dd / ( n - nx ) ) )
+    		} else if( emet == "ml" ){
+    			term1	<- determinant( as.matrix( M[ -( 1:nx ), -( 1:nx ) ] ) )$modulus
+    			term2	<- n * ( 1 + log( 2 * pi * dd / n ) )
+    		}
+    		loglik		<- term1 + term2
     	}
-    	loglik		<- term1 + term2
     	return( loglik )
     }
 
@@ -43,7 +47,6 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "rem
 
     } else {
     	n     	<- length( y )
-    	sf	<- meig$sf
     	ev	<- meig$ev
     	X1	<- x
     	if( is.null( X1 ) == F ){
@@ -99,10 +102,10 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "rem
         }
 
     	nsv	<- ifelse(is.null( X1 ), 1, dim( X1 )[ 2 ] + 1 )
-    	X2	<- sf
+    	X2	<- meig$sf
     	if( nsv >= 2 ){
     		for( i in 1:( nsv - 1 ) ){
-   			X2   	<- cbind( X2, X1[, i ] * sf )
+   			X2   	<- cbind( X2, X1[, i ] * meig$sf )
     		}
     	}
 
@@ -143,29 +146,20 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "rem
     	bse		<- sqrt( diag( b_cov ) )
 
     	nev		<- length( ev )
-        if( se == TRUE ){
-    		b_vc		<- matrix( 0, nrow = n, ncol = nsv )
-    		bse_vc		<- matrix( 0, nrow = n, ncol = nsv )
-    		for( j in 1:nsv ){
-        		bid0		<- ifelse( j == 1, 1, nxf + j )
-    			bid0_vc		<- ( nx + nev * ( j - 1 ) + 1 ):( nx + nev * j )
-        		bid		<- c( bid0, bid0_vc )
-        		b_vc  [ , j ]   <- b[ bid0 ] + sf %*% b[ bid0_vc ]
+    	b_vc		<- matrix( 0, nrow = n, ncol = nsv )
+    	bse_vc		<- matrix( 0, nrow = n, ncol = nsv )
+    	for( j in 1:nsv ){
+        	bid0		<- ifelse( j == 1, 1, nxf + j )
+    		bid0_vc		<- ( nx + nev * ( j - 1 ) + 1 ):( nx + nev * j )
+        	bid		<- c( bid0, bid0_vc )
+        	b_vc  [ , j ]   <- b[ bid0 ] + meig$sf %*% b[ bid0_vc ]
 
-    			b_cov_sub	<- b_cov[ bid, bid ]
-        		sf2		<- t( t( sf ) * evSqrt2[ , j ] )
-        		x_sf		<- as.matrix( cbind( X[ , bid0 ], sf2 ) )
-   			bse_vc[ , j ]	<- sqrt( diag( x_sf %*% b_cov_sub %*% t( x_sf ) ) )
-    		}
-        } else {
-    		b_vc		<- matrix( 0, nrow = n, ncol = nsv )
-    		for( j in 1:nsv ){
-        		bid0		<- ifelse( j == 1, 1, nxf + j )
-    			bid0_vc		<- ( nx + nev * ( j - 1 ) + 1 ):( nx + nev * j )
-        		bid		<- c( bid0, bid0_vc )
-        		b_vc  [ , j ]   <- b[ bid0 ] + sf %*% b[ bid0_vc ]
-    		}
-        }
+    		b_cov_sub	<- b_cov[ bid, bid ]
+        	sf2		<- t( t( meig$sf ) * evSqrt2[ , j ] )
+        	x_sf		<- as.matrix( cbind( X[ , bid0 ], sf2 ) )
+   		bse_vc[ , j ]	<- sqrt( colSums( t( x_sf ) * ( b_cov_sub %*% t( x_sf ) ) ) )
+    	}
+
     	parV		<- par2[   1:nsv  ]
     	parR		<- par2[ -(1:nsv) ]
 
@@ -177,41 +171,28 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, se = TRUE, meig, method = "rem
     	r2_0		<- 1 - SSE / SSY
     	r2		<- 1 - ( 1- r2_0 ) * ( n - 1 ) / ( n - np - 1 )
 
-    	if( se == TRUE ){
-    		df	<- sum( diag( Xm %*% Minv %*% t( Xm ) ) )
-    	}
         if( nxf != 0 ) {
     		b		<- b  [ 2:( nxf + 1 ) ]
     		bse		<- bse[ 2:( nxf + 1 ) ]
     		bt		<- b / bse
-    		if( se == TRUE ){
-        		bp		<- 2 - 2 * pt( abs( bt ), df = n - df )
-    			b_par		<- data.frame( Estimate = b, SE = bse, t_value = bt, p_value = bp )
-        		rownames( b_par )<- xfname
-    		} else {
-    			b_par		<- data.frame( Estimate = b, SE = bse, t_value = bt )
-        		rownames( b_par )<- xfname
-    		}
+    		df		<- sum( t( Xm ) * ( Minv %*% t( Xm ) ) )
+        	bp		<- 2 - 2 * pt( abs( bt ), df = n - df )
+    		b_par		<- data.frame( Estimate = b, SE = bse, t_value = bt, p_value = bp )
+        	rownames( b_par )<- xfname
         } else {
         	b_par		<- NULL
         }
 
-        if( se == TRUE ){
-        	bt_vc		<- b_vc / bse_vc
-        	bp_vc		<- 2 - 2 * pt( abs( bt_vc ), df = n - df )
-        	b_vc		<- data.frame( b_vc )
-        	bse_vc		<- data.frame( bse_vc )
-        	bt_vc		<- data.frame( bt_vc )
-        	bp_vc		<- data.frame( bp_vc )
-        	names( b_vc )	<- c( "(Intercept)", xname )
-        	names( bse_vc )	<- c( "(Intercept)", xname )
-        	names( bt_vc )	<- c( "(Intercept)", xname )
-        	names( bp_vc )	<- c( "(Intercept)", xname )
-        } else {
-        	b_vc		<- data.frame( b_vc )
-        	names( b_vc )	<- c( "(Intercept)", xname )
-        	bse_vc<- bt_vc	<- bp_vc <- NULL
-        }
+        bt_vc		<- b_vc / bse_vc
+        bp_vc		<- 2 - 2 * pt( abs( bt_vc ), df = n - df )
+        b_vc		<- data.frame( b_vc )
+        bse_vc		<- data.frame( bse_vc )
+        bt_vc		<- data.frame( bt_vc )
+        bp_vc		<- data.frame( bp_vc )
+        names( b_vc )	<- c( "(Intercept)", xname )
+        names( bse_vc )	<- c( "(Intercept)", xname )
+        names( bt_vc )	<- c( "(Intercept)", xname )
+        names( bp_vc )	<- c( "(Intercept)", xname )
         parV		<- parV * sqrt( sig )
     	sf_par		<- data.frame( rbind( parV, parR ) )
     	names( sf_par )	<- c( "(Intercept)", xname )
