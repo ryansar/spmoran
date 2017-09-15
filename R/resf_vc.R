@@ -180,6 +180,7 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, meig, method = "reml" ){
     		b_par		<- data.frame( Estimate = b, SE = bse, t_value = bt, p_value = bp )
         	rownames( b_par )<- xfname
         } else {
+    		df		<- sum( t( Xm ) * ( Minv %*% t( Xm ) ) )
         	b_par		<- NULL
         }
 

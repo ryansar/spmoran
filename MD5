@@ -1,4 +1,4 @@
-5b10d5601d7259f4f15dc5cf57573a2e *DESCRIPTION
+3ae3d6857ed41d8d0c9409c86c99c049 *DESCRIPTION
 a4ebd7b2b8f0b20f64e796643dfd376a *NAMESPACE
 0894b6b5c5ad9bf8c303cc1cfbfbd90a *R/esf.R
 3218b5538c8b1bb538c15148a109f6bd *R/meigen.R
@@ -6,9 +6,9 @@ a950ccfdc150fd236b6c4ace22d84140 *R/meigen_f.R
 0e2646e30d4b48345b8e56f1477fc448 *R/plot_qr.R
 02c5f1c4398e9159f668bc2660f440d7 *R/resf.R
 754d8fdad1d2d5ce7c172f5e588cf49d *R/resf_qr.R
-875cdeb839f27053c533899780f36550 *R/resf_vc.R
+5cd674729674960deae85bc27e172ad6 *R/resf_vc.R
 c50b9f45481839574052294204be7821 *build/vignette.rds
-82b40a8516ed310475128af5af71f80e *inst/doc/vignette.pdf
+ce902803003f44ba866a54bd3de4d94d *inst/doc/vignette.pdf
 1d6d7d946d96d4e75964c52f2ecd3b36 *inst/doc/vignette.pdf.asis
 ec39359cffcde1a08483ddbaae73363f *man/esf.Rd
 4020da5ba73985727d3b9b19126be21d *man/meigen.Rd
