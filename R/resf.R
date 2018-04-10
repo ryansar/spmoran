@@ -19,7 +19,7 @@ resf  	<- function( y, x = NULL, meig, method = "reml" ){
     		b	<- Minv %*% m
     		sse	<- yy - 2 * t( b ) %*% m + t( b ) %*% M0 %*% b
     		dd	<- sse + sum( b[ -( 1:nx ) ] ^ 2 )
-    		if( ( emet == "reml" ) | ( emet == "pls" ) ){
+    		if( emet == "reml" ){
     			term1	<- determinant( M )$modulus
     			term2	<- ( n - nx ) * ( 1 + log( 2 * pi * dd / ( n - nx ) ) )
     		} else if( emet == "ml" ){
@@ -33,19 +33,22 @@ resf  	<- function( y, x = NULL, meig, method = "reml" ){
 
     n		<- length( y )
     if( is.null( x ) ){
-    	X	<- as.matrix( rep( 1,n ) )
+    	X	<- as.matrix( rep( 1, n ) )
     	xname	<- "(Intercept)"
+    	x_id	<- NULL
     } else {
     	X00	<- as.matrix( x )
     	if( is.numeric( X00 ) == F ){
     		mode( X00 ) <- "numeric"
     	}
-    	xind	<- apply( X00, 2, sd ) != 0
-    	X0	<- X00[ , xind ]
-    	X	<- as.matrix( cbind( 1, X0 ) )
-    	if( sum( xind ) == 0 ){
+    	x_id	<- apply( X00, 2, sd ) != 0
+    	if( sum( x_id ) == 0 ){
+    		X	<- as.matrix( rep( 1, n ) )
     		xname	<- "(Intercept)"
+    		x_id	<- NULL
     	} else {
+    		X0	<- X00[ , x_id ]
+    		X	<- as.matrix( cbind( 1, X0 ) )
     		xname	<- c( "(Intercept)", names( as.data.frame( X0 ) ) )
     	}
     }
@@ -58,14 +61,14 @@ resf  	<- function( y, x = NULL, meig, method = "reml" ){
     Xy		<- crossprod(  X, y )
     EX		<- crossprod( meig$sf, X )
     Ey		<- crossprod( meig$sf, y )
-    if( meig$fast == 0 ){
+    if( meig$other$fast == 0 ){
     	EE	<- diag( ne )
-    } else if( meig$fast == 1){
+    } else if( meig$other$fast == 1){
     	EE	<- crossprod( meig$sf )
     }
     M		<- as.matrix( rbind( cbind( XX, t( EX ) ), cbind( EX, EE ) ) )
     m		<- c( Xy, Ey )
-    res		<- optim( fn = lik_resf, c( 1, 1 ), ev = ev, M = M, m = m, yy = yy, 
+    res		<- optim( fn = lik_resf, c( 1, 1 ), ev = ev, M = M, m = m, yy = yy,
     			   n = n, nx = nx, ne = ne, emet = method )
     par		<- res$par ^ 2
     loglik	<- ( -1 / 2 ) * res$value
@@ -100,23 +103,22 @@ resf  	<- function( y, x = NULL, meig, method = "reml" ){
     b_par	<- data.frame( Estimate = b[ 1:nx ], SE = bse[ 1:nx ], t_value = bt, p_value = bp )
     rownames( b_par ) <- xname
 
-    r_par	<- data.frame( b[ -( 1:nx ) ] )
-    rownames( r_par ) <- paste( "r", 1:ne, sep = "" )
+    r_par		<- data.frame( b[ -( 1:nx ) ] )
+    names( r_par )	<- "Estimate"
+    rownames( r_par )	<- paste( "r", 1:ne, sep = "" )
 
     par[ 2 ]	<- par[ 2 ] * sqrt( sig )
     sf_par	<- data.frame( par = par[ c( 2, 1 ) ] )
     rownames( sf_par ) <- c( "shrink_sf_SE", "shrink_sf_alpha" )
 
     e_stat	<- data.frame( stat = c( sqrt( sig ), r2, loglik, AIC, BIC ) )
-    if( ( method == "reml" ) | ( method == "pls" ) ){
-    	rownames( e_stat ) <- c( "resid_SE", "adjR2(cond)", "rlogLik", "AIC", "BIC" ) 
-    	if( method == "reml" ){
-    		message( " RE-ESF model fit by REML" )
-    	}
+    if( method == "reml" ){
+    	rownames( e_stat ) <- c( "resid_SE", "adjR2(cond)", "rlogLik", "AIC", "BIC" )
     } else if( method == "ml" ){
     	rownames( e_stat ) <- c( "resid_SE", "adjR2(cond)", "logLik", "AIC", "BIC" )
-    	message( " RE-ESF model fit by ML" )
     }
-    return( list( b = b_par, s = sf_par, e = e_stat, 
-    		  r = r_par, sf = SF, pred = pred, resid = resid ) )
+    other	<- list( x_id = x_id, model = "resf", par0 = res$par )
+
+    return( list( b = b_par, s = sf_par, e = e_stat,
+    		  r = r_par, sf = SF, pred = pred, resid = resid, other = other ) )
 }

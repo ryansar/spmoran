@@ -1,12 +1,13 @@
 Package: spmoran
 Type: Package
 Title: Moran's Eigenvector-Based Spatial Regression Models
-Version: 0.1.2
+Version: 0.1.3
+Date: 2018-04-08
 Author: Daisuke Murakami
 Maintainer: Daisuke Murakami <dmuraka@ism.ac.jp>
 Description: Functions for estimating fixed and random effects
     eigenvector spatial filtering models.
-    For details see Daisuke Murakami (2017) <arXiv:1703.04467v3>.
+    For details see Murakami (2018) <arXiv:1703.04467>.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
@@ -14,6 +15,6 @@ Imports: fields, vegan, Matrix, doParallel, foreach, ggplot2,
 Suggests: spdep, R.rsp,
 VignetteBuilder: R.rsp
 NeedsCompilation: no
-Packaged: 2017-09-15 14:49:21 UTC; murakami
+Packaged: 2018-04-09 01:30:23 UTC; murakami
 Repository: CRAN
-Date/Publication: 2017-09-15 15:17:01 UTC
+Date/Publication: 2018-04-10 04:45:59 UTC

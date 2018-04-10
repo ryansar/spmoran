@@ -1,45 +1,47 @@
-meigen_f	<- function( coords, enum = 200, longlat = FALSE ){
-    n		<- dim( coords )[ 1 ]
-    if( enum < 1 | enum != floor( enum ) ){
-    	stop( " enum must be a positive integer smaller than n" )
-    }
-    if( enum >= n ){
-    	stop( " enum must be less than n" )
-    }
+meigen_f	<- function( coords, model = "exp", enum = 200 ){			
+    n		<- dim( coords )[ 1 ]		
+    if( enum < 1 | enum != floor( enum ) ){				
+    	stop( " enum must be a positive integer" )			
+    }				
+    				
+    if( enum >= n - 1 ){				
+    	result	<- meigen(coords = coords, model = model )
+    	result$other$coordk	<- NULL
+    	result$other$sfk	<- NULL
+    	result$other$evk	<- NULL
 
-    if( enum >= n - 1 ){
-    	meig	<- meigen(coords = coords, longlat = longlat)
-    	ev_ap	<- meig$ev
-    	ev_ap0	<- meig$ev_full
-    	sf_ap	<- meig$sf
-    	fast	<- 0
-    } else {
-    	coordk	<- kmeans( coords, centers = enum + 1 )$centers
-    	if( longlat == TRUE){
-    		D	<- rdist.earth( coordk )
+    } else {				
+    	coordk	<- kmeans( coords, centers = enum + 1 )$centers		
+    	D	<- rdist( coordk )		
+    	h	<- max( spantree( D )$dist )		
+    	if( model == "exp" ){			
+    		C	<- exp( -D / h )	
+    	} else if( model == "gau" ){			
+    		C	<- exp( -( D / h) ^ 2 )	
+    	} else if( model == "sph" ){			
+    		C	<- ifelse( D < h , 1 - 1.5 * (D / h ) + 0.5 * ( D / h ) ^ 3, 0 )	
     	} else {
-    		D	<- rdist( coordk )
+    		stop( "model is not specified appropriately" )
     	}
-    	h	<- max( spantree( D )$dist )
-    	C	<- exp( -D / h )
-    	Cmean	<- apply( C, 1, mean )
-    	MCM	<- t( C - Cmean ) - Cmean + mean( Cmean )
-    	eigenC	<- eigen( MCM )
-    	sf0	<- eigenC$vectors[ , eigenC$values > 1e-08 ]
-    	ev0	<- eigenC$values [   eigenC$values > 1e-08 ]
-    	ev_ap0	<- ev0 * ( n / enum ) - 1
-    	sf_ap0	<- sf0 %*% diag( 1 / ev0 )
-    	if( longlat == TRUE){
-	    	sf_ap0	<- t( exp( -rdist.earth( coordk, coords ) / h ) - Cmean ) %*% sf_ap0
-    	} else {
-    		sf_ap0	<- t( exp( -rdist( coordk, coords ) / h ) - Cmean ) %*% sf_ap0
-    	}
-    	sf_ap0	<- t( t( sf_ap0 ) - colMeans( sf_ap0 ) )
-    	ev_ap	<- ev_ap0[   ev_ap0 > 1e-08 ]
-    	sf_ap	<- as.matrix( sf_ap0[ , ev_ap0 > 1e-08 ] )
-    	mes	<- paste( " ", length( ev_ap ), "/", length( sf_ap[ , 1 ] ), " eigen-pairs are approximated", sep = "" )
-    	message( mes )
-    	fast	<- 1
-    }
-    return( list( sf  =sf_ap, ev = ev_ap, ev_full = ev_ap0, fast = fast ) )
-}
+    				
+    	Cmean	<- apply( C, 1, mean )		
+    	MCM	<- t( C - Cmean ) - Cmean + mean( Cmean )		
+    	eigenC	<- eigen( MCM )		
+    	sf0	<- eigenC$vectors[ , eigenC$values > 1e-08 ]		
+    	ev0	<- eigenC$values [   eigenC$values > 1e-08 ]		
+    	ev_full	<- ev0 * ( n / enum ) - 1		
+    	ev_ap	<- ev_full[   ev_full > 1e-08 ]		
+
+    	sf_ap0	<- sf0 %*% diag( 1 / ev0 )		
+    	sf_ap0	<- t( exp( -rdist( coordk, coords ) / h ) - Cmean ) %*% sf_ap0		
+    	sf_ap0	<- t( t( sf_ap0 ) - colMeans( sf_ap0 ) )		
+    	sf_ap	<- as.matrix( sf_ap0[ , ev_full > 1e-08 ] )		
+   	sf0	<- as.matrix( sf0   [ , ev_full > 1e-08 ] )
+    	ev0	<- ev0   [   ev_full > 1e-08 ] -1
+    	other	<- list( coordk = coordk, sfk = sf0, evk = ev0, Cmean = Cmean, h = h, model = model, fast = 1 )
+    	mes	<- paste( " ", length( ev_ap ), "/", length( sf_ap[ , 1 ] ), " eigen-pairs are approximated", sep = "" )		
+    	message( mes )			
+    	result	<- list( sf  =sf_ap, ev = ev_ap, ev_full = ev_full, other = other )
+    }				
+    return( result )				
+}				

@@ -1,6 +1,6 @@
 \name{resf}
 \alias{resf}
-\title{Random effects eigenvector spatial filtering}
+\title{Spatial regression with random effects eigenvector spatial filtering}
 \usage{
 resf( y, x = NULL, meig, method = "reml" )
 }
@@ -15,12 +15,13 @@ This function estimates the random effects eigenvector spatial filtering (RE-ESF
 }
 \value{
 \item{b}{Matrix with columns for the estimated coefficients on \eqn{x}, their standard errors, t-values, and p-values (\eqn{K} x 4)}
-\item{r}{Vector of estimated random coefficients on Moran's eigenvectors (\eqn{L} x 1)}
-\item{sf}{Vector of estimated spatial dependent component (\eqn{N} x 1)}
 \item{s}{Vector of estimated shrinkage parameters (2 x 1). The first and the second elements denote the standard error and the spatial scale of the estimated spatial dependent component, respectively (see Murakami and Griffith, 2015)}
 \item{e}{Vector whose elements are residual standard error (resid_SE), adjusted conditional R2 (adjR2(cond)), restricted log-likelihood (rlogLik), Akaike information criterion (AIC), and Bayesian information criterion (BIC). When method = "ml", restricted log-likelihood (rlogLik) is replaced with log-likelihood (logLik)}
+\item{r}{Vector of estimated random coefficients on Moran's eigenvectors (\eqn{L} x 1)}
+\item{sf}{Vector of estimated spatial dependent component (\eqn{N} x 1)}
 \item{pred}{Vector of predicted values (\eqn{N} x 1)}
 \item{resid}{Vector of residuals (\eqn{N} x 1)}
+\item{other}{List of other outcomes, which are internally used}
 }
 \references{
 Murakami, D. and Griffith, D.A. (2015) Random effects specifications in eigenvector spatial filtering: a simulation study. Journal of Geographical Systems, 17 (4), 311-331.

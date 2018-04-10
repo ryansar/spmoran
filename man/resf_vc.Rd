@@ -1,11 +1,12 @@
 \name{resf_vc}
 \alias{resf_vc}
-\title{RE-ESF with spatially varying coefficients}
+\title{Spatially varying coefficient modeling with automatic coefficient selection}
 \usage{
-resf_vc( y, x = NULL, xconst = NULL, meig, method = "reml" )
+resf_vc(y, x, xconst=NULL, meig, method="reml",
+        penalty="bic", maxiter=30, sizelimit=2000 )
 }
 \description{
-This function estimates the random effects eigenvector spatial filtering (RE-ESF) model with varying coefficients.
+This function estimates a spatially varying coefficient model based on the random effects eigenvector spatial filtering (RE-ESF) approach. Spatially varying coefficients are selected to stablize the estimates.
 }
 \arguments{
 \item{y}{Vector of explained variables (\eqn{N} x 1)}
@@ -13,25 +14,27 @@ This function estimates the random effects eigenvector spatial filtering (RE-ESF
 \item{xconst}{Matrix of explanatory variables whose coefficients are assumed constant across space (\eqn{N} x \eqn{K_const}). Default is NULL}
 \item{meig}{Moran's eigenvectors and eigenvalues. Output from \code{\link{meigen}} or \code{\link{meigen_f}}}
 \item{method}{Estimation method. Restricted maximum likelihood method ("reml") and maximum likelihood method ("ml") are available. Default is "reml"}
+\item{penalty}{Penalty to select varying coefficients and stablize the estimates. The current options are "bic" for the Baysian information criterion-type penalty (\eqn{N} x \eqn{log(K)}) and "aic" for the Akaike information criterion  (\eqn{2N}) (see Muller et al., 2013). Default is "bic"}
+\item{maxiter}{Maximum number of iterations. Default is 30}
+\item{sizelimit}{Maximum size of matrix being inverted. Roughly speaking, this value contraints \eqn{K} + \eqn{KL}, where \eqn{K} and \eqn{L} are the numbers of the explanatory variables and eigen-pairs, respectively. If \eqn{K} + \eqn{KL} exceeds sizelimit, \eqn{L} is reduced to fullfill the contraint. Default is 2000}
 }
 \value{
 \item{b}{Matrix with columns for the estimated coefficients on \eqn{xconst}, their standard errors, t-values, and p-values (\eqn{K_const} x 4)}
+\item{s}{Matrix of estimated shrinkage parameters (2 x \eqn{K}). The (1, \eqn{k})-th element denotes the standard error of the \eqn{k}-th SVCs, while the (2, \eqn{k})-th element denotes the spatial scale of the same SVCs (see Murakami et al., 2016)}
+\item{e}{Vector whose elements are residual standard error (resid_SE), adjusted conditional R2 (adjR2(cond)), restricted log-likelihood (rlogLik), Akaike information criterion (AIC), and Bayesian information criterion (BIC). When method = "ml", restricted log-likelihood (rlogLik) is replaced with log-likelihood (logLik)}
 \item{b_vc}{Matrix of estimated spatially varying coefficients (SVCs) on \eqn{x} (\eqn{N} x \eqn{K})}
 \item{bse_vc}{Matrix of estimated standard errors for the SVCs (\eqn{N} x \eqn{k})}
 \item{t_vc}{Matrix of estimated t-values for the SVCs (\eqn{N} x \eqn{K})}
 \item{p_vc}{Matrix of estimated p-values for the SVCs (\eqn{N} x \eqn{K})}
-\item{s}{Matrix of estimated shrinkage parameters (2 x \eqn{K}). The (1, \eqn{k})-th element denotes the standard error of the \eqn{k}-th SVCs, while the (2, \eqn{k})-th element denotes the spatial scale of the same SVCs (see Murakami et al., 2016)}
-\item{e}{Vector whose elements are residual standard error (resid_SE), adjusted conditional R2 (adjR2(cond)), restricted log-likelihood (rlogLik), Akaike information criterion (AIC), and Bayesian information criterion (BIC). When method = "ml", restricted log-likelihood (rlogLik) is replaced with log-likelihood (logLik)}
 \item{pred}{Vector of predicted values (\eqn{N} x 1)}
 \item{resid}{Vector of residuals (\eqn{N} x 1)}
-}
-\note{
-Spatially varying coefficients estimates can be unstable if too many explanatory variables are included in \eqn{x} (see Wheeler and Tiefelsdorf, 2005). In case with many explanatory variables, it is preferable to include at most four or five explanatory variables for \eqn{x}, and the other explanatory variables for \eqn{xconst}.
+\item{vc}{Vector indicating whether spatial variations are found or not from each coefficients (\eqn{K} x 1)}
+\item{other}{List of other outcomes, which are internally used}
 }
 \references{
-Murakami, D., Yoshida, T., Seya, H., Griffith, D.A., and Yamagata, Y. (2016) A Moran coefficient-based mixed effects approach to investigate spatially varying relationships. Spatial Statistics, 19, 68-89.
+Muller, S., Scealy, J.L., and Welsh, A.H. (2013) Model selection in linear mixed models. Statistical Science, 28 (2), 136-167.
 
-Wheeler, D. and Tiefelsdorf, M. (2005) Multicollinearity and correlation among local regression coefficients in geographically weighted regression. Journal of Geographical Systems, 7 (2), 161-187.
+Murakami, D., Yoshida, T., Seya, H., Griffith, D.A., and Yamagata, Y. (2017) A Moran coefficient-based mixed effects approach to investigate spatially varying relationships. Spatial Statistics, 19, 68-89.
 }
 \author{
 Daisuke Murakami
@@ -42,29 +45,29 @@ Daisuke Murakami
 \examples{
 require(spdep)
 data(boston)
-y	<- boston.c[, "CMEDV"]
-x	<- boston.c[, "NOX"  ]#Coefficients on "NOX" are allowed to vary spatially
-xconst  <- boston.c[,c("ZN","INDUS", "CHAS", "RM", "DIS", "AGE", "CRIM",
-                       "RAD", "TAX", "PTRATIO", "B", "LSTAT")]
-coords  <- boston.c[,c("LAT","LON")]
+y	    <- boston.c[, "CMEDV"]
+x     <- boston.c[,c("ZN", "INDUS" ,"LSTAT")]
+xconst<- boston.c[,c("CRIM", "NOX", "CHAS", "AGE", "DIS", "RAD", "TAX", "PTRATIO", "B", "RM" )]
+coords<- boston.c[,c("LAT","LON")]
+
 meig 	<- meigen(coords=coords)
-res	<- resf_vc(y=y,x=x,xconst=xconst,meig=meig)
+# meig_f 	<- meigen_f(coords=coords)  ## for fast computation
+
+res	  <- resf_vc(y=y,x=x,xconst=xconst,meig=meig)
 res$b
 res$s
 res$e
+
+res$vc
 res$b_vc[1:10,]
 res$bse_vc[1:10,]
 res$t_vc[1:10,]
 res$p_vc[1:10,]
 
-###Plot the first SVC (intercept)
+###Plot the first SVC (INDUS)
 #
 #require(ggplot2)
 #ggplot(mapping = aes(x = coords$LON, y = coords$LAT)) +
-#  geom_point(aes(colour = res$b_vc[,1])) +
+#  geom_point(aes(colour = res$b_vc[,3])) +
 #  scale_color_gradientn(colours=rev(rainbow(4)))
-
-#########Fast approximation
-meig_f 	<- meigen_f(coords=coords)
-res	<- resf_vc(y=y,x=x,xconst=xconst, meig=meig_f)
 }

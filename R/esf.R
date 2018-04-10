@@ -1,4 +1,5 @@
 esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
+
     ObjEval	<-function( sfmod, fn ){
     	if( fn == "r2" ){
     		Obj	<- summary( sfmod )$adj.r.squared
@@ -10,24 +11,27 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     	return( Obj )
     }
 
-    n     <- length( y )
-    dum   <- 0
+    n		<- length( y )
+    dum		<- 0
     if( is.null( x ) ){
     	sfmod	<- lm( y ~ 1 )
     	X	<- NULL
+   	x_id	<- NULL
     	nx	<- 1
     } else {
     	X00	<- as.matrix( x )
     	if( is.numeric( X00 ) == F ){
     		mode( X00 ) <- "numeric"
     	}
-    	X	<- as.matrix( X00[ , apply( X00, 2, sd ) != 0 ] )
-    	if( dim( X )[ 2 ] == 0 ) {
+    	x_id	<- apply( X00, 2, sd ) != 0
+     	if( sum( x_id ) == 0 ) {
     		sfmod	<- lm( y ~ 1 )
     		X	<- NULL
+   		x_id	<- NULL
     		nx	<- 1
     	} else {
-    		sfmod	<- lm( y ~ X )
+    		X	<- as.matrix( X00[ , x_id ] )
+   		sfmod	<- lm( y ~ X )
     		nx	<- dim( X )[ 2 ] + 1
     		vif0	<- max( diag( solve( cor( X ) ) ) )
     		if( is.null( vif ) == F ){
@@ -42,23 +46,26 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     	}
     }
 
+    Xinit	<- X
     sf      	<- as.matrix( meig$sf )
     ev      	<- meig$ev
     ne		<- length( ev )
     sf_list	<- 1:ne
+    Sf_sel_l<- NULL
 
     if( dum == 0 ){
+    	dd	<- data.frame( cbind( y, Xinit ) )
     if( fn != "all" ){
     	Obj	<- ObjEval( sfmod = sfmod, fn = fn )
-    	Obj_old	<- Obj - 1
+    	Obj_old	<- -Inf
     	obj	<- Obj
     	i	<- 1
-    	while( ( Obj_old < Obj ) & ( i <= ne ) ){
+    	while( ( Obj_old < Obj ) & ( i < ne ) ){
     		Obj_old	<- Obj
     		Obj_list<- NULL
     		for( ii in 1:dim( sf )[ 2 ] ){
     			d	<- data.frame( cbind( y, X, sf[ , ii ] ) )
-			names(d)[1]<-"y"
+				names(d)[1]<-"y"
     			sfmod0	<- lm( y ~ ., d )
     			Obj	<- ObjEval( sfmod = sfmod0, fn = fn )
     			Obj_list<- c( Obj_list, Obj )
@@ -68,7 +75,7 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     			obj	<- c( obj, Obj )
     			Obj_ind0<- ( 1:length( Obj_list ) ) * ( Obj_list == Obj )
     			Obj_ind	<- Obj_ind0[ Obj_ind0 != 0 ][ 1 ]
-			sf_sel_l<- sf_list[    Obj_ind ]
+				sf_sel_l<- sf_list[    Obj_ind ]
     			sf_sel	<- sf     [ ,  Obj_ind ]
     			sf_list	<- sf_list[   -Obj_ind ]
     			sf	<- sf     [ , -Obj_ind ]
@@ -87,12 +94,41 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     				dd	<- data.frame( y, X )
     				sfmod	<- lm( y ~ ., dd )
     			}
-    			i	<- i + 1
-    		}
+    			Sf_sel_l	<- c( Sf_sel_l, sf_sel_l )
+    			i		<- i + 1
+    		}# else {
+    		#	if( i == 1 ){
+    		#		dd	<- data.frame( y, Xinit )
+    		#	}
+    		#}
     		if( i %% 50 == 0 ) print( i )
     	}
+    	if( i == ne ){
+    		Obj_old			<- Obj
+    		X0			<- cbind( Xinit, meig$sf )
+    		if( is.null( vif ) ){
+    			vif_id		<- 0
+    		} else {
+    			VIF		<- diag( solve( cor( X0 ) ) )
+    			vif_id		<- ifelse( max( VIF ) < vif, 0, 1 )
+    		}
+
+    		if( vif_id == 0 ){
+    			dd0		<- data.frame( y, X0 )
+    			names( dd0 )[ 1 ]  <- "y"
+    			names( dd0 )[ ( nx + 1 ):( nx + ne) ]<- paste( "sf", 1:ne, sep = "" )
+    			sfmod0		<- lm( y ~ ., dd0 )
+    			Obj		<- ObjEval( sfmod = sfmod0, fn = fn )
+    			if( Obj_old < Obj ){
+    				X	<- X0
+    				dd	<- dd0
+    				sfmod	<- sfmod0
+    				Sf_sel_l<- 1:ne
+    			}
+    		}
+    	}
     } else {
-    	dd	<- data.frame( y, X )
+    	dd	<- data.frame( cbind( y, X ) )
     	for( ii in sf_list ){
     		X0	<- cbind( X, sf[, ii ] )
     		if( is.null( vif ) == F ){
@@ -107,6 +143,7 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     			names( X )[ dim( X )[ 2 ] ] <- paste( "sf", ii, sep = "" )
     			dd	<- data.frame( y, X )
     		}
+    		 Sf_sel_l	<- c( Sf_sel_l, ii )
     	}
     	sfmod	<- lm( y ~ ., dd )
     }
@@ -123,12 +160,18 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     	names( b_par ) <- c( "Estimate", "SE","t_value", "p_value" )
     }
 
-    if( dim( dd )[ 2 ] == ( nx + 1 ) ){
+    if( dim( dd )[ 2 ] == nx ){
     	r	<- NULL
     	nr	<- 0
     } else {
-    	r	<- data.frame( summary( sfmod )$coefficients[ -(1:nx), 1:4 ] )
-    	nr	<- dim( r )[ 1 ]
+    		if( dim( dd )[ 2 ] == ( nx + 1 ) ){
+    		r	<- data.frame( t( summary( sfmod )$coefficients[ -(1:nx), 1:4 ] ) )
+    		row.names( r ) <- names( dd )[ dim( dd )[ 2 ] ]
+    		nr	<- 1
+    	} else {
+    		r	<- data.frame( summary( sfmod )$coefficients[ -(1:nx), 1:4 ] )
+    		nr	<- dim( r )[ 1 ]
+    	}
     	names( r )	<- c( "Estimate", "SE","t_value", "p_value" )
     }
 
@@ -153,5 +196,7 @@ esf		<-function( y, x = NULL, vif = NULL, meig, fn = "r2" ){
     if( dum ==0) {
     message( paste( "  ", nr, "/", ne, " eigenvectors are selected", sep = "" ) )
     }
-    return( list( b = b_par, r = r, vif = vif, e = e_stat, sf = SF, pred = pred, resid = resid ) )
+
+    other	<- list( x_id = x_id, sf_id = Sf_sel_l, model = "esf" )
+    return( list( b = b_par, r = r, vif = vif, e = e_stat, sf = SF, pred = pred, resid = resid, other = other ) )
 }

@@ -126,9 +126,9 @@ resf_qr <- function( y, x = NULL, meig, tau = NULL, boot = TRUE, iter = 200 ){
     if( boot == TRUE ){
     	XX	<- crossprod( X )
     	EX	<- crossprod( meig$sf, X )
-    	if( meig$fast == 0 ){
+    	if( meig$other$fast == 0 ){
     		EE	<- diag( length( meig$ev ) )
-    	} else if( meig$fast == 1 ){
+    	} else if( meig$other$fast == 1 ){
     		EE	<- crossprod( meig$sf )
     	}
     	M	<- as.matrix( rbind( cbind( XX, t( EX ) ), cbind( EX, EE ) ) )
@@ -147,7 +147,7 @@ resf_qr <- function( y, x = NULL, meig, tau = NULL, boot = TRUE, iter = 200 ){
     probs	    <- c( 0.025, 0.975 )
     for( j in 1:length( tau ) ){
       RIF	<- q[ j ] + ( tau[ j ] - indic( y = y, q_sel = q[ j ], tau_sel = tau[ j ] ) ) / fq[ j ]
-    	mod	<- resf( y = RIF, meig = meig, x = X, method = "pls" )
+    	mod	<- resf( y = RIF, meig = meig, x = X )
     	SFb	<- cbind( SFb	, mod$b[ , 1 ] )
     	SFr	<- cbind( SFr	, mod$r[ , 1 ] )
     	SFs	<- cbind( SFs	, mod$s[ 1:2, ]	)

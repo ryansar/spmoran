@@ -1,6 +1,6 @@
 \name{esf}
 \alias{esf}
-\title{Eigenvector spatial filtering}
+\title{Spatial regression with eigenvector spatial filtering}
 \usage{
 esf( y, x = NULL, vif = NULL, meig, fn = "r2" )
 }
@@ -17,10 +17,12 @@ This function estimates the linear eigenvector spatial filtering (ESF) model. Fo
 \value{
 \item{b}{Matrix with columns for the estimated coefficients on \eqn{x}, their standard errors, t-values, and p-values (\eqn{K} x 4)}
 \item{r}{Matrix with columns for the estimated coefficients on Moran's eigenvectors, their standard errors, t-values, and p-values (\eqn{L} x 4)}
-\item{sf}{Vector of estimated spatial dependent component (\eqn{E\gamma}) (\eqn{N} x 1)}
+\item{vif}{Vector of variance inflation factors of the explanatory variables (\eqn{N} x 1)}
 \item{e}{Vector whose elements are residual standard error (resid_SE), adjusted R2 (adjR2), log-likelihood (logLik), AIC, and BIC}
+\item{sf}{Vector of estimated spatial dependent component (\eqn{E\gamma}) (\eqn{N} x 1)}
 \item{pred}{Vector of predicted values (\eqn{N} x 1)}
 \item{resid}{Vector of residuals (\eqn{N} x 1)}
+\item{other}{List of other outcomes, which are internally used}
 }
 \references{
 Tiefelsdorf, M., and Griffith, D. A. (2007). Semiparametric filtering of spatial autocorrelation: the eigenvector approach. Environment and Planning A, 39 (5), 1193-1221.
