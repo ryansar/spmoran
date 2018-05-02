@@ -23,7 +23,9 @@ meigen		<- function( coords, model = "exp", threshold = 0, enum = NULL, cmat = N
     		message( "   cmat is symmetrized by ( cmat + t( cmat ) ) / 2" )		
     	}			
     	C	<- as.matrix( cmat )	
-    	model	<- "other"	
+    	model	<- "other"
+    	coords	<- NULL
+    	h	<- NULL
     }				
     diag( C )	<- 0			
     Cmean	<- apply( C, 1, mean )			
