@@ -315,7 +315,7 @@ resf_vc		<- function( y, x = NULL, xconst = NULL, meig, method = "reml", penalty
     			b_02	<- t( M0inv_01 ) %*% mm
 
     			if( par0_sel == 1){
-    			  llim    <- c( sd( y ) / 30, 1e-03)
+    			  llim    <- c( parVmax_sq / 1000, 1e-03)
     			  ulim    <- c( parVmax_sq, 4 )
     			  omethod <- "L-BFGS-B"
     			  res    	<- optim( fn = lik_resf_vc, par00, par0 = par0, ev = ev, M = MM, M0inv = M0inv,

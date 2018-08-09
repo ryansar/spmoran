@@ -1,4 +1,4 @@
-85a6370bf4a2fb29a59d950653c1e799 *DESCRIPTION
+04550bec33d55ff69d5cd15169e23434 *DESCRIPTION
 58cf5d30b083fc686ba0a5e4378cb588 *NAMESPACE
 147d4631e91fb7eb431fdf41368fa94f *R/esf.R
 6fbcdfad2fe50572fcb5162c6efc38a7 *R/meigen.R
@@ -9,8 +9,8 @@ cd281ae78974b794d549393dcf527142 *R/meigen0.R
 ee2e37b5e97e325f51434a59b41f4b22 *R/predict0_vc.R
 6f183b96c92c2f0fc25bceb0d6ba11ba *R/resf.R
 9edd7b2ef6eb7f28c0f7a64a42fb103d *R/resf_qr.R
-65038c0310a5852cbe439b996348a83c *R/resf_vc.R
-1c2ff6b181491ad8b95b798aa93ffb2a *build/vignette.rds
+765dc1ba81b783b3fd9da789f0ec9492 *R/resf_vc.R
+b5bc33d6ba7ecf8a3736562730b901c4 *build/vignette.rds
 94344009f99f2e1be715fa717cd76deb *inst/doc/vignettes.pdf
 1d6d7d946d96d4e75964c52f2ecd3b36 *inst/doc/vignettes.pdf.asis
 19c03f09ef29dcc3bae64f78ecf2012a *man/esf.Rd
