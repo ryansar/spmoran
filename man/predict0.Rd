@@ -10,10 +10,10 @@ This function predicts explained variables using eigenvector spatial filtering (
 \arguments{
 \item{mod}{ESF or RE-ESF model estimates. Output from \code{\link{esf}} or \code{\link{resf}}}
 \item{meig0}{Moran's eigenvectors at predicted sites. Output from \code{\link{meigen0}}}
-\item{x0}{Matrix of explanatory variables at predicted sites (\eqn{N_0} x K). Default is NULL}
+\item{x0}{Matrix of explanatory variables at predicted sites (N_0 x K). Default is NULL}
 }
 \value{
-\item{pred}{Matrix with the first column for the predicted values. The second and the third columns are the trend component and the spatial component in the predicted values (\eqn{N} x 3)}
+\item{pred}{Matrix with the first column for the predicted values. The second and the third columns are the trend component and the spatial component in the predicted values (N x 3)}
 }
 \references{
 Drineas, P. and Mahoney, M.W. (2005) On the Nystrom method for approximating a gram matrix for improved kernel-based learning. Journal of Machine Learning Research, 6 (2005), 2153-2175.

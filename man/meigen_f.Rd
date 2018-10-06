@@ -8,19 +8,19 @@ meigen_f( coords, model = "exp", enum = 200 )
 This function performs a fast approximation of Moran's eigenvectors and their corresponding eigenvalues.
 }
 \arguments{
-\item{coords}{Matrix of spatial point coordinates (\eqn{N} x 2)}
+\item{coords}{Matrix of spatial point coordinates (N x 2)}
 \item{model}{Type of kernel to model spatial dependence. The currently available options are "exp" for the exponential kernel, "gau" for the Gaussian kernel, and "sph" for the spherical kernel}
 \item{enum}{Number of eigenvectors and eigenvalues to be extracted (scalar). Default is 200}
 }
 \details{
-This function extracts approximated Moran's eigenvectors from MCM. M = I - 11'/\eqn{N} is a centering operator, and C is a spatial connectivity matrix whose (\eqn{i}, \eqn{j})-th element is given by exp( -\eqn{d_i,j} / \eqn{h} ), where \eqn{d_i,j} is the Euclidean distance between sample sites \eqn{i} and \eqn{j}, and \eqn{h} is a range parameter given by the maximum length of the minimum spanning tree connecting sample sites (see Dray et al., 2006).
+This function extracts approximated Moran's eigenvectors from MCM. M = I - 11'/N is a centering operator, and C is a spatial connectivity matrix whose (i, j)-th element is given by exp( -d(i,j)/h), where d(i,j) is the Euclidean distance between the sample sites i and j, and h is a range parameter given by the maximum length of the minimum spanning tree connecting sample sites (see Dray et al., 2006).
 
-Following a simulation result that 200 eigenvectors are sufficient for accurate approximation of ESF models (Murakami and Griffith, 2017), this function approximates the first 200 eigenvectors by default (i.e., \eqn{enum} = 200). If \eqn{enum} is given by a smaller value like 100, the computation time will be shorter, but with greater approximation error. Following \code{\link{meigen}}, eigenvectors corresponding to negative eigenvalues are omitted among the 200 eigenvectors.
+Following a simulation result that 200 eigenvectors are sufficient for accurate approximation of ESF models (Murakami and Griffith, 2018), this function approximates the first 200 eigenvectors by default (i.e., enum = 200). If enum is given by a smaller value like 100, the computation time will be shorter, but with greater approximation error. Following \code{\link{meigen}}, eigenvectors corresponding to negative eigenvalues are omitted among the 200 eigenvectors.
 }
 \value{
-\item{sf}{Matrix of the first \eqn{L} approximated eigenvectors (\eqn{N} x \eqn{L})}
-\item{ev}{Vector of the first \eqn{L} approximated eigenvalues (\eqn{L} x 1)}
-\item{ev_full}{Vector of all approximated eigenvalues (\eqn{enum} x 1)}
+\item{sf}{Matrix of the first L approximated eigenvectors (N x L)}
+\item{ev}{Vector of the first L approximated eigenvalues (L x 1)}
+\item{ev_full}{Vector of all approximated eigenvalues (enum x 1)}
 \item{other}{List of other outcomes, which are internally used}
 }
 \references{

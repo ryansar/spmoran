@@ -5,20 +5,20 @@
 predict0_vc( mod, meig0, x0 = NULL, xconst0 = NULL )
 }
 \description{
-This function predicts explained variables and spatially varying coefficients using a spatially varying coefficient model, which is based on the random effects ESF. The Nystrom extension is used to minimize the expected prediction error
+This function predicts explained variables and spatially varying coefficients using a Moran's eigenvector-based spatially varying coefficient model. The Nystrom extension is used to minimize the expected prediction error
 }
 \arguments{
 \item{mod}{spatially varying coefficient model estimates. Output from \code{\link{resf_vc}}}
 \item{meig0}{Moran's eigenvectors at predicted sites. Output from \code{\link{meigen0}}}
-\item{x0}{Matrix of explanatory variables at predicted sites whose coefficients are allowed to vary across geographical space (\eqn{N_0} x \eqn{K}). Default is NULL}
-\item{xconst0}{Matrix of explanatory variables at predicted sites whose coefficients are assumed constant across space (\eqn{N_0} x \eqn{K_const}). Default is NULL}
+\item{x0}{Matrix of explanatory variables at predicted sites whose coefficients are allowed to vary across geographical space (N_0 x K). Default is NULL}
+\item{xconst0}{Matrix of explanatory variables at predicted sites whose coefficients are assumed constant across space (N_0 x K_const). Default is NULL}
 }
 \value{
-\item{pred}{Matrix with the first column for the predicted values. The second and the third columns are the trend component (i.e., component explained by x0 and xconst0) and the spatial component in the predicted values (\eqn{N} x 3)}
-\item{b_vc}{Matrix of estimated spatially varying coefficients (SVCs) on x0 (\eqn{N_0} x \eqn{K})}
-\item{bse_vc}{Matrix of estimated standard errors for the SVCs (\eqn{N_0} x \eqn{k})}
-\item{t_vc}{Matrix of estimated t-values for the SVCs (\eqn{N_0} x \eqn{K})}
-\item{p_vc}{Matrix of estimated p-values for the SVCs (\eqn{N_0} x \eqn{K})}
+\item{pred}{Matrix with the first column for the predicted values. The second and the third columns are the trend component (i.e., component explained by x0 and xconst0) and the spatial component in the predicted values (N x 3)}
+\item{b_vc}{Matrix of estimated spatially varying coefficients (SVCs) on x0 (N_0 x K)}
+\item{bse_vc}{Matrix of estimated standard errors for the SVCs (N_0 x K)}
+\item{t_vc}{Matrix of estimated t-values for the SVCs (N_0 x K)}
+\item{p_vc}{Matrix of estimated p-values for the SVCs (N_0 x K)}
 
 }
 

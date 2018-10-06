@@ -1,6 +1,6 @@
 meigen		<- function( coords, model = "exp", threshold = 0, enum = NULL, cmat = NULL ){		
     if( threshold > 1 | threshold < 0 ){				
-    	stop( "threshold must lie between 0 and 1" )			
+    	stop( "threshold must be a value between 0 and 1" )			
     } else if ( threshold ==1) {				
     	threshold <- threshold - 1e-07			
     }				
@@ -17,7 +17,7 @@ meigen		<- function( coords, model = "exp", threshold = 0, enum = NULL, cmat = N
     		stop( "model is not specified appropriately" )
     	}		
     } else {				
-    	if( isSymmetric( cmat )==F ) {			
+    	if( isSymmetric( cmat )==FALSE ) {			
     		C 	<- 0.5 * ( cmat + t( cmat ) )	
     		message( " Note:" )		
     		message( "   cmat is symmetrized by ( cmat + t( cmat ) ) / 2" )		
@@ -34,7 +34,7 @@ meigen		<- function( coords, model = "exp", threshold = 0, enum = NULL, cmat = N
     eigenC$values	<- Re( eigenC$values )			
     eigenC$vectors	<- Re( eigenC$vectors )			
     sel		<- ( eigenC$values / max( eigenC$values ) >= threshold + 1e-07 )		
-    if( is.null( enum ) == F ){				
+    if( is.null( enum ) == FALSE ){				
     	if( sum(sel) > enum ){			
     		sel[ -c(1:enum) ] <- FALSE		
     	}			

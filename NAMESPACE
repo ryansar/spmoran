@@ -1,12 +1,15 @@
 exportPattern("^[[:alpha:]]+")
 importFrom(fields, rdist, rdist.earth)
-importFrom(Matrix, determinant)
+importFrom(Matrix, determinant, spMatrix)
+importFrom(rARPACK, eigs_sym)
 importFrom(vegan, spantree)
+importFrom(spdep, nb2listw, knearneigh, knn2nb, tri2nb, poly2nb)
 importFrom(parallel, makeCluster, detectCores, stopCluster)
 importFrom(doParallel, registerDoParallel)
 importFrom(foreach, foreach, "%dopar%")
 import(ggplot2)
-importFrom("stats", "cor", "kmeans", "lm", "logLik", "optim",
+import(methods)
+importFrom("stats", "median", "cor", "kmeans", "lm", "logLik",
              "predict", "pt", "residuals", "sd", "approx",
-           "density", "quantile", "rnorm")
+           "density", "quantile", "rnorm", "optim")
 importFrom("graphics", "plot")
