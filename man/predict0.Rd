@@ -37,7 +37,7 @@ coords0 <- d0[,c("LAT","LON")]
 
 ############ Model estimation
 meig 	  <- meigen( coords = coords )
-mod	    <- resf(y=y,x=x,meig=meig)
+mod	    <- resf(y=y, x=x, meig=meig)
 ## or
 # mod   <- esf(y=y,x=x,meig=meig)
 

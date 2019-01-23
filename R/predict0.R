@@ -10,7 +10,7 @@ predict0<- function( mod, meig0, x0 = NULL ){
     }
 
     if( is.null( mod$other$x_id ) ){
-    	xb_pred	<- mod$b[ 1 ]
+    	xb_pred	<- c( as.matrix( mod$b[ 1 ] ) )
     	pred	<- xb_pred + sf_pred
     } else {
     	if( is.null( x0 ) ){
