@@ -1,10 +1,10 @@
-2499ed63ab5da267851610abb6659a76 *DESCRIPTION
+91211dc7f57227b5c3964cdd78f5847e *DESCRIPTION
 475a02da5ceee3f592f9400298648582 *NAMESPACE
 147d4631e91fb7eb431fdf41368fa94f *R/esf.R
 369d6721a6dc9abff6ac0c76e897441d *R/lsem.R
 c64d2f1e3498d079bffbeefe5966a152 *R/lslm.R
 ad87f2d7cb5c56f4f7c4d7f6dabd088d *R/meigen.R
-cd281ae78974b794d549393dcf527142 *R/meigen0.R
+5037255716552430aa8ae3536b7b8338 *R/meigen0.R
 812c31101dda5ba134cd638791883f5b *R/meigen_f.R
 0e2646e30d4b48345b8e56f1477fc448 *R/plot_qr.R
 4dac85225d3daaa5c128c0a33f05bf7b *R/predict0.R
@@ -13,7 +13,7 @@ ee2e37b5e97e325f51434a59b41f4b22 *R/predict0_vc.R
 9edd7b2ef6eb7f28c0f7a64a42fb103d *R/resf_qr.R
 765dc1ba81b783b3fd9da789f0ec9492 *R/resf_vc.R
 12de1e8fcd2b32ad0313374b4a44324d *R/weigen.R
-f5ec56b3f06f6660b190b98749cd42eb *build/vignette.rds
+b8c8d7c56fc4b6b804fbf7fd3adb1656 *build/vignette.rds
 fe0b65384fbad4e9f147f92614081062 *inst/doc/vignettes.pdf
 1d6d7d946d96d4e75964c52f2ecd3b36 *inst/doc/vignettes.pdf.asis
 cafb2e8f36e8786f8803d1a6fb7c2655 *man/esf.Rd
