@@ -1,4 +1,4 @@
-resf  	<- function( y, x = NULL, meig, method = "reml" ){
+resf  	<- function( y, x = NULL, meig, method = "reml", par0 = c( 1, 1 ) ){
 
     lik_resf	<- function( par0, ev, M, m, yy, n, nx, ne, emet ){
     	par	<- par0 ^ 2
@@ -68,7 +68,7 @@ resf  	<- function( y, x = NULL, meig, method = "reml" ){
     }
     M		<- as.matrix( rbind( cbind( XX, t( EX ) ), cbind( EX, EE ) ) )
     m		<- c( Xy, Ey )
-    res		<- optim( fn = lik_resf, c( 1, 1 ), ev = ev, M = M, m = m, yy = yy,
+    res		<- optim( fn = lik_resf, par0, ev = ev, M = M, m = m, yy = yy,
     			   n = n, nx = nx, ne = ne, emet = method )
     par		<- res$par ^ 2
     loglik	<- ( -1 / 2 ) * res$value
